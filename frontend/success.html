@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Success</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.box {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    width: 350px;
+}
+
+h1 {
+    color: green;
+}
+
+.order-id {
+    font-weight: bold;
+    margin: 10px 0;
+    color: #2a5298;
+}
+
+.time {
+    margin-top: 10px;
+    color: #555;
+}
+
+button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    border: none;
+    background: #2a5298;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1e3c72;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+    <h1>✅ Order Successful!</h1>
+
+    <p>Thank you for your order 🍔🍕</p>
+
+    <div class="order-id" id="orderId"></div>
+
+    <div class="time" id="time"></div>
+
+    <button onclick="goHome()">Go Back Home</button>
+</div>
+
+<script>
+
+// =========================
+// ORDER ID GENERATOR
+// =========================
+function generateOrderId() {
+    return "AZ-" + Math.floor(Math.random() * 90000 + 10000);
+}
+
+document.getElementById("orderId").innerText =
+    "Order ID: " + generateOrderId();
+
+
+// =========================
+// DELIVERY TIME ESTIMATE
+// =========================
+let min = 25;
+let max = 45;
+let estimate = Math.floor(Math.random() * (max - min + 1)) + min;
+
+document.getElementById("time").innerText =
+    "Estimated delivery: " + estimate + " - " + (estimate + 10) + " minutes";
+
+
+// =========================
+// AUTO REDIRECT (OPTIONAL)
+// =========================
+setTimeout(() => {
+    window.location.href = "index.html";
+}, 8000);
+
+
+// =========================
+// BUTTON REDIRECT
+// =========================
+function goHome() {
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
