@@ -101,7 +101,7 @@
 
 <script>
   // GET address from cart/map
-  let address = localStorage.getItem("deliveryLocation",selectedAddress);
+  let locationData = JSON.parse(localStorage.getItem("deliveryLocation"));
 
   // SHOW address
   const addressBox = document.getElementById("addressBox");
