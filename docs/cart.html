@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.total {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 15px;
+}
+
+.address-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f0f0;
+    border-radius: 8px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: darkgreen;
+}
+
+.remove-btn {
+    background: red;
+    padding: 5px 10px;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Your Cart 🛒</h2>
+
+    <div id="cart"></div>
+
+    <div class="total" id="total"></div>
+
+    <!-- DELIVERY ADDRESS -->
+    <div class="address-box" id="addressBox"></div>
+
+    <button onclick="goToCheckout()">Proceed to Checkout</button>
+</div>
+
+<script>
+
+// LOAD DATA
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let locationData = JSON.parse(localStorage.getItem("deliveryLocation"));
+
+const cartDiv = document.getElementById("cart");
+const totalDiv = document.getElementById("total");
+const addressBox = document.getElementById("addressBox");
+
+let total = 0;
+
+// RENDER CART
+function renderCart() {
+
+    cartDiv.innerHTML = "";
+    total = 0;
+
+    if (cart.length === 0) {
+        cartDiv.innerHTML = "<p>Your cart is empty 😢</p>";
+        totalDiv.innerText = "";
+    } else {
+
+        cart.forEach((item, index) => {
+
+            total += Number(item.price);
+
+            cartDiv.innerHTML += `
+                <div class="cart-item">
+                    <img src="${item.image}">
+                    <span>${item.name}</span>
+                    <span>R${item.price}</span>
+
+                    <button class="remove-btn" onclick="removeItem(${index})">
+                        X
+                    </button>
+                </div>
+            `;
+        });
+
+        totalDiv.innerText = "Total: R" + total;
+    }
+
+    // ADDRESS SECTION
+    if (locationData) {
+        addressBox.innerHTML = `
+            <h3>Delivery Address 📍</h3>
+            <p>${locationData.name}</p>
+        `;
+    } else {
+        addressBox.innerHTML = `
+            <h3>Delivery Address 📍</h3>
+            <p style="color:red;">No location selected</p>
+        `;
+    }
+}
+
+renderCart();
+
+// REMOVE ITEM
+function removeItem(index) {
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCart();
+}
+
+// CHECKOUT
+function goToCheckout() {
+
+    if (cart.length === 0) {
+        alert("Cart is empty");
+        return;
+    }
+
+    if (!locationData) {
+        alert("Please select a delivery location on the map first");
+        return;
+    }
+
+    window.location.href = "checkout.html";
+}
+
+</script>
+
+</body>
+</html>
