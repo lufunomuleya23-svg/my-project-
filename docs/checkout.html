@@ -98,7 +98,7 @@ button:hover {
     <!-- CUSTOMER INFO -->
     <input type="text" id="name" placeholder="Your Name">
     <input type="text" id="phone" placeholder="Phone Number">
-    <button onclick="placeOrder()">Place Order</button>
+    <button onclick="window.location.href='success.html'">Place Order</button>
 
 </div>
 
@@ -200,7 +200,6 @@ function placeOrder() {
         // clear cart
         localStorage.removeItem("cart");
 
-        window.location.href = "success.html";
     })
     .catch(err => {
         console.error(err);
