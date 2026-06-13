@@ -98,7 +98,8 @@ button:hover {
     <!-- CUSTOMER INFO -->
     <input type="text" id="name" placeholder="Your Name">
     <input type="text" id="phone" placeholder="Phone Number">
-    <button onclick="window.location.href='success.html'">Place Order</button>
+
+    <button onclick="placeOrder()">Place Order</button>
 
 </div>
 
@@ -185,13 +186,6 @@ function placeOrder() {
         address: locationData
     };
 
-    fetch("http://localhost:3000/order", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(orderData)
-    })
     .then(res => res.json())
     .then(data => {
 
@@ -200,6 +194,7 @@ function placeOrder() {
         // clear cart
         localStorage.removeItem("cart");
 
+        window.location.href = "success.html";
     })
     .catch(err => {
         console.error(err);
@@ -211,3 +206,4 @@ function placeOrder() {
 
 </body>
 </html>
+ 
