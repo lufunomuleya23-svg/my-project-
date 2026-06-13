@@ -7,21 +7,18 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #ece9e6, #ffffff);
+      background: #f5f5f5;
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
     }
 
-    .card {
-      width: 380px;
+    .container {
+      max-width: 420px;
+      margin: 60px auto;
       background: white;
-      border-radius: 15px;
       padding: 25px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
 
     h2 {
@@ -36,7 +33,7 @@
     }
 
     .address {
-      background: #f3f3f3;
+      background: #eee;
       padding: 10px;
       border-radius: 8px;
       margin-top: 5px;
@@ -53,20 +50,19 @@
     }
 
     input:focus {
-      border-color: #000;
+      border-color: black;
     }
 
     button {
       width: 100%;
-      margin-top: 20px;
       padding: 12px;
+      margin-top: 20px;
       border: none;
       border-radius: 8px;
       background: black;
       color: white;
       font-size: 16px;
       cursor: pointer;
-      transition: 0.3s;
     }
 
     button:hover {
@@ -74,17 +70,17 @@
     }
 
     .note {
-      font-size: 12px;
       text-align: center;
-      margin-top: 10px;
+      font-size: 12px;
       color: gray;
+      margin-top: 10px;
     }
   </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="container">
 
   <h2>Checkout</h2>
 
@@ -99,12 +95,20 @@
 
   <button onclick="placeOrder()">Place Order</button>
 
-  <div class="note">Secure checkout • No payment required for demo</div>
+  <div class="note">Secure checkout • No payment required</div>
 
 </div>
 
 <script>
-  const address = localStorage.getItem("deliveryLocation");
+  // GET address from cart/map
+  let address = localStorage.getItem("deliveryAddress");
+
+  // REMOVE lat/lng if they exist
+  if (address && address.includes("-")) {
+    address = address.split("-")[0].trim();
+  }
+
+  // SHOW address
   const addressBox = document.getElementById("addressBox");
 
   if (address && address !== "null") {
@@ -122,14 +126,16 @@
       return;
     }
 
-    if (!address || address === "null") {
-      alert("Please select a location on the map");
+    if (!address) {
+      alert("No address selected");
       return;
     }
 
+    // save order (optional)
     const order = { name, phone, address };
     localStorage.setItem("lastOrder", JSON.stringify(order));
 
+    // go success page
     window.location.href = "success.html";
   }
 </script>
