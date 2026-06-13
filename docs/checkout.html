@@ -1,209 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout</title>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
 
-<style>
-body {
-    font-family: Arial;
-    margin: 0;
-    padding: 20px;
-    background: #f5f5f5;
-}
+    .box {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
 
-.container {
-    max-width: 700px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-}
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
 
-h2 {
-    text-align: center;
-}
-
-.cart-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.cart-item img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.total {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: right;
-    margin-top: 15px;
-}
-
-.address-box {
-    margin-top: 20px;
-    padding: 15px;
-    background: #f0f0f0;
-    border-radius: 8px;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    background: green;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-top: 20px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: darkgreen;
-}
-</style>
+    button:hover {
+      background: #333;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="box">
 
-    <h2>Checkout 🧾</h2>
+  <h2>Checkout</h2>
 
-    <!-- CART -->
-    <div id="cart"></div>
+  <p><strong>Delivery Address:</strong></p>
+  <p id="addressBox">Loading address...</p>
 
-    <div class="total" id="total"></div>
+  <p><strong>Customer Name:</strong></p>
+  <input type="text" id="name" placeholder="Enter your name" required>
 
-    <!-- ADDRESS -->
-    <div class="address-box" id="addressBox"></div>
+  <p><strong>Phone Number:</strong></p>
+  <input type="text" id="phone" placeholder="Enter your phone" required>
 
-    <!-- CUSTOMER INFO -->
-    <input type="text" id="name" placeholder="Your Name">
-    <input type="text" id="phone" placeholder="Phone Number">
-
-    <button onclick="placeOrder()">Place Order</button>
+  <button onclick="placeOrder()">Place Order</button>
 
 </div>
 
 <script>
+  // Get address from map (localStorage)
+  const address = localStorage.getItem("deliveryAddress");
 
-// LOAD DATA
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-let locationData = JSON.parse(localStorage.getItem("deliveryLocation"));
+  const addressBox = document.getElementById("addressBox");
 
-const cartDiv = document.getElementById("cart");
-const totalDiv = document.getElementById("total");
-const addressBox = document.getElementById("addressBox");
+  if (address) {
+    addressBox.innerText = address;
+  } else {
+    addressBox.innerText = "No address selected";
+  }
 
-let total = 0;
-
-// SHOW CART
-function renderCheckout() {
-
-    cartDiv.innerHTML = "";
-    total = 0;
-
-    if (cart.length === 0) {
-        cartDiv.innerHTML = "<p>Your cart is empty 😢</p>";
-    } else {
-
-        cart.forEach(item => {
-
-            total += Number(item.price);
-
-            cartDiv.innerHTML += `
-                <div class="cart-item">
-                    <img src="${item.image}">
-                    <span>${item.name}</span>
-                    <span>R${item.price}</span>
-                </div>
-            `;
-        });
-
-        totalDiv.innerText = "Total: R" + total;
-    }
-
-    // ADDRESS DISPLAY
-    if (locationData) {
-        addressBox.innerHTML = `
-            <h3>Delivery Address 📍</h3>
-            <p>${locationData.name}</p>
-        `;
-    } else {
-        addressBox.innerHTML = `
-            <h3>Delivery Address 📍</h3>
-            <p style="color:red;">No delivery location selected</p>
-        `;
-    }
-}
-
-renderCheckout();
-
-// PLACE ORDER
-function placeOrder() {
-
+  function placeOrder() {
     const name = document.getElementById("name").value;
     const phone = document.getElementById("phone").value;
 
+    // validation
     if (!name || !phone) {
-        alert("Please fill in your details");
-        return;
+      alert("Please fill in your details");
+      return;
     }
 
-    if (cart.length === 0) {
-        alert("Cart is empty");
-        return;
+    if (!address) {
+      alert("Please select a location on the map first");
+      return;
     }
 
-    if (!locationData) {
-        alert("No delivery location selected");
-        return;
-    }
-
-    const orderData = {
-        customerName: name,
-        phone: phone,
-        items: cart,
-        total: total,
-        address: locationData
+    // OPTIONAL: save order (frontend only)
+    const order = {
+      name: name,
+      phone: phone,
+      address: address
     };
 
-    .then(res => res.json())
-    .then(data => {
+    localStorage.setItem("lastOrder", JSON.stringify(order));
 
-        alert("Order placed successfully!");
-
-        // clear cart
-        localStorage.removeItem("cart");
-
-        window.location.href = "success.html";
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Failed to place order");
-    });
-}
-
+    // go to success page
+    window.location.href = "success.html";
+  }
 </script>
 
 </body>
 </html>
- 
+   
