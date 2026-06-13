@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: #f4f4f4;
       margin: 0;
       padding: 0;
     }
@@ -18,7 +18,7 @@
       background: white;
       padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
     h2 {
@@ -27,17 +27,18 @@
     }
 
     .label {
-      font-size: 14px;
       margin-top: 10px;
+      font-size: 14px;
       color: #444;
     }
 
-    .address {
+    .box {
       background: #eee;
       padding: 10px;
       border-radius: 8px;
       margin-top: 5px;
       font-size: 14px;
+      word-wrap: break-word;
     }
 
     input {
@@ -85,7 +86,7 @@
   <h2>Checkout</h2>
 
   <div class="label">Delivery Address</div>
-  <div id="addressBox" class="address">Loading...</div>
+  <div id="addressBox" class="box">Loading...</div>
 
   <div class="label">Name</div>
   <input type="text" id="name" placeholder="Enter your name">
@@ -95,21 +96,31 @@
 
   <button onclick="placeOrder()">Place Order</button>
 
-  <div class="note">Secure checkout • No payment required</div>
+  <div class="note">No backend required • Demo checkout</div>
 
 </div>
 
 <script>
-  // GET address from cart/map
-  let locationData = JSON.parse(localStorage.getItem("deliveryLocation"));
+  // GET address safely
+  let address = localStorage.getItem("deliveryLocation");
 
-  // SHOW address
+  // CLEAN wrong formats (lat/lng or empty)
+  if (address) {
+    if (address.includes(",") && address.split(",").length === 2) {
+      // could be lat/lng → check if numbers
+      const parts = address.split(",");
+      if (!isNaN(parts[0]) && !isNaN(parts[1])) {
+        address = null;
+      }
+    }
+  }
+
   const addressBox = document.getElementById("addressBox");
 
-  if (address && address !== "null") {
-    addressBox.innerText = address;
-  } else {
+  if (!address || address === "null" || address === "") {
     addressBox.innerText = "No address selected ❌";
+  } else {
+    addressBox.innerText = address;
   }
 
   function placeOrder() {
@@ -122,15 +133,17 @@
     }
 
     if (!address) {
-      alert("No address selected");
+      alert("No address selected from map");
       return;
     }
 
     // save order (optional)
-    const order = { name, phone, address };
-    localStorage.setItem("lastOrder", JSON.stringify(order));
+    localStorage.setItem("lastOrder", JSON.stringify({
+      name,
+      phone,
+      address
+    }));
 
-    // go success page
     window.location.href = "success.html";
   }
 </script>
