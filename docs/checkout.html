@@ -101,12 +101,7 @@
 
 <script>
   // GET address from cart/map
-  let address = localStorage.getItem("deliveryLocation");
-
-  // REMOVE lat/lng if they exist
-  if (address && address.includes("-")) {
-    address = address.split("-")[0].trim();
-  }
+  let address = localStorage.getItem("deliveryLocation",selectedAddress);
 
   // SHOW address
   const addressBox = document.getElementById("addressBox");
